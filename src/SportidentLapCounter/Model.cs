@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using SportidentLapCounter.DataTypes;
 
 namespace SportidentLapCounter
 {

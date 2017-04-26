@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SportidentLapCounter
+namespace SportidentLapCounter.DataTypes
 {
     public class Team
     {
