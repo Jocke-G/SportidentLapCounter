@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -26,7 +25,7 @@ namespace SportidentLapCounter.Controls.MainForm
 
             dataGridView.AutoGenerateColumns = false;
 
-            dataGridView.DataSource = Presenter.Model.Teams;
+            UpdateFromModel();
             SetFontSize(Presenter.Model.FontSize);
         }
 
@@ -79,14 +78,19 @@ namespace SportidentLapCounter.Controls.MainForm
                     x.LatestPunchTime = punchData.PunchDateTime;
                 }
 
-                Presenter.Model.Teams = new BindingList<Team>(Presenter.Model.Teams.OrderByDescending(x => x.Laps).ThenBy(x => x.LatestPunchTime).ToList());
+                Presenter.SortTeams();
 
-                dataGridView.DataSource = null;
-                dataGridView.DataSource = Presenter.Model.Teams;
+                UpdateFromModel();
                 dataGridView.ClearSelection();
 
                 Presenter.PersistModel();
             });
+        }
+
+        private void UpdateFromModel()
+        {
+            dataGridView.DataSource = null;
+            dataGridView.DataSource = Presenter.Model.Teams;
         }
 
         private void Connect()
@@ -123,7 +127,7 @@ namespace SportidentLapCounter.Controls.MainForm
         }
 
 
-        private void SaveFile(object sender, DataGridViewCellEventArgs e)
+        private void CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (Presenter.Model == null)
                 return;
@@ -131,7 +135,7 @@ namespace SportidentLapCounter.Controls.MainForm
             Presenter.PersistModel();
         }
 
-        private void SaveFile(object sender, DataGridViewRowEventArgs e)
+        private void RowAddedOrDeleted(object sender, DataGridViewRowEventArgs e)
         {
             Presenter.PersistModel();
         }

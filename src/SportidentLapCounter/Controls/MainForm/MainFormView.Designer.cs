@@ -95,9 +95,9 @@
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.Size = new System.Drawing.Size(934, 464);
             this.dataGridView.TabIndex = 9;
-            this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.SaveFile);
-            this.dataGridView.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.SaveFile);
-            this.dataGridView.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.SaveFile);
+            this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellValueChanged);
+            this.dataGridView.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.RowAddedOrDeleted);
+            this.dataGridView.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.RowAddedOrDeleted);
             // 
             // columnNumber
             // 
