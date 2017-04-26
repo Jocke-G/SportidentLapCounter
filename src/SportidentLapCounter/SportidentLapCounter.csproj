@@ -93,6 +93,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataTypes\Team.cs" />
+    <Compile Include="Services\PersistenceService.cs" />
     <EmbeddedResource Include="Controls\MainForm\MainFormView.resx">
       <DependentUpon>MainFormView.cs</DependentUpon>
     </EmbeddedResource>

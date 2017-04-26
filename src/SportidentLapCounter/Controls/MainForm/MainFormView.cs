@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 using SportidentLapCounter.DataTypes;
 using SPORTident;
 using SPORTident.Common;
@@ -17,7 +16,6 @@ namespace SportidentLapCounter.Controls.MainForm
 
         private MainFormPresenter Presenter => _presenter ?? (_presenter = new MainFormPresenter());
 
-        private const string XmlPath = "database.xml";
 
         private Reader _reader;
 
@@ -28,7 +26,6 @@ namespace SportidentLapCounter.Controls.MainForm
 
             dataGridView.AutoGenerateColumns = false;
 
-            Presenter.Model = LoadXmlFile();
             dataGridView.DataSource = Presenter.Model.Teams;
             SetFontSize(Presenter.Model.FontSize);
         }
@@ -46,31 +43,6 @@ namespace SportidentLapCounter.Controls.MainForm
             GetSiDevices();
         }
 
-        private MainFormModel LoadXmlFile()
-        {
-            if (!File.Exists(XmlPath))
-                return new MainFormModel();
-
-            try
-            {
-                using (var file = new StreamReader(XmlPath))
-                {
-                    var serializer = new XmlSerializer(typeof(MainFormModel));
-                    var obj = serializer.Deserialize(file);
-                    var model = obj as MainFormModel;
-                    if (model == null)
-                        return new MainFormModel();
-
-                    file.Close();
-                    return model;
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-                return new MainFormModel();
-            }
-        }
 
         private void GetSiDevices()
         {
@@ -113,7 +85,7 @@ namespace SportidentLapCounter.Controls.MainForm
                 dataGridView.DataSource = Presenter.Model.Teams;
                 dataGridView.ClearSelection();
 
-                SaveFile();
+                Presenter.PersistModel();
             });
         }
 
@@ -150,27 +122,18 @@ namespace SportidentLapCounter.Controls.MainForm
             button_sportidentDisconnect.Enabled = false;
         }
 
-        private void SaveFile()
-        {
-            using (var streamWriter = new StreamWriter(XmlPath))
-            {
-                var xmlSerializer = new XmlSerializer(typeof(MainFormModel));
-                xmlSerializer.Serialize(streamWriter, Presenter.Model);
-                streamWriter.Close();
-            }
-        }
 
         private void SaveFile(object sender, DataGridViewCellEventArgs e)
         {
             if (Presenter.Model == null)
                 return;
 
-            SaveFile();
+            Presenter.PersistModel();
         }
 
         private void SaveFile(object sender, DataGridViewRowEventArgs e)
         {
-            SaveFile();
+            Presenter.PersistModel();
         }
 
         private void buttonBigger_Click(object sender, EventArgs e)
@@ -182,7 +145,7 @@ namespace SportidentLapCounter.Controls.MainForm
         {
             var fontSize = dataGridView.DefaultCellStyle.Font.Size + 1;
             SetFontSize(fontSize);
-            SaveFile();
+            Presenter.PersistModel();
         }
 
         private void buttonSmaller_Click(object sender, EventArgs e)
@@ -194,7 +157,7 @@ namespace SportidentLapCounter.Controls.MainForm
         {
             var fontSize = dataGridView.DefaultCellStyle.Font.Size - 1;
             SetFontSize(fontSize);
-            SaveFile();
+            Presenter.PersistModel();
         }
 
         private void SetFontSize(float fontSize)
@@ -265,6 +228,5 @@ namespace SportidentLapCounter.Controls.MainForm
                 dataGridView.ClearSelection();
             }
         }
-
     }
 }
