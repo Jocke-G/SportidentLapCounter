@@ -3,12 +3,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using SPORTident;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using SPORTident;
 using SPORTident.Common;
 
-namespace SportidentLapTimer
+namespace SportidentLapCounter
 {
     public partial class MainForm : Form
     {
@@ -243,7 +243,7 @@ namespace SportidentLapTimer
             }
             else
             {
-                if (comboBox_sportidentDevices.Enabled == true)
+                if (comboBox_sportidentDevices.Enabled)
                 {
                     var result = MessageBox.Show(@"Vill du verkligen starta fullskärm utan att ha aktiverat Sportidentenheten?", @"Bekräfta", MessageBoxButtons.YesNo);
                     if (result == DialogResult.No)

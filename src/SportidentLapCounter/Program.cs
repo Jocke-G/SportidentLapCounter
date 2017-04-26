@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SportidentLapTimer
+namespace SportidentLapCounter
 {
     static class Program
     {

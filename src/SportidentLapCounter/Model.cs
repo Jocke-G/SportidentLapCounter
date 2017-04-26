@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace SportidentLapTimer
+namespace SportidentLapCounter
 {
     [Serializable]
     public class Model

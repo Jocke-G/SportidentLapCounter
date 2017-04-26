@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace SportidentLapTimer
+namespace SportidentLapCounter
 {
     public static class InvokeRequired
     {

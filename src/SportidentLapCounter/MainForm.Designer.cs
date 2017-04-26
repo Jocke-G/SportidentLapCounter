@@ -1,4 +1,4 @@
-﻿namespace SportidentLapTimer
+﻿namespace SportidentLapCounter
 {
     partial class MainForm
     {

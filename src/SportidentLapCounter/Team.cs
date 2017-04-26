@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SportidentLapTimer
+namespace SportidentLapCounter
 {
     public class Team
     {
