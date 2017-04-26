@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using SportidentLapCounter.Controls.MainForm;
 
 namespace SportidentLapCounter
 {
@@ -13,7 +14,7 @@ namespace SportidentLapCounter
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new MainFormView());
         }
     }
 }

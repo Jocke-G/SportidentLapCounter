@@ -1,6 +1,6 @@
-﻿namespace SportidentLapCounter
+﻿namespace SportidentLapCounter.Controls.MainForm
 {
-    partial class MainForm
+    partial class MainFormView
     {
         /// <summary>
         /// Required designer variable.
@@ -177,7 +177,7 @@
             this.panelSettings.Size = new System.Drawing.Size(934, 68);
             this.panelSettings.TabIndex = 13;
             // 
-            // MainForm
+            // MainFormView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

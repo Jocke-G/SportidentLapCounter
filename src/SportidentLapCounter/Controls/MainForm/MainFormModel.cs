@@ -2,12 +2,12 @@
 using System.ComponentModel;
 using SportidentLapCounter.DataTypes;
 
-namespace SportidentLapCounter
+namespace SportidentLapCounter.Controls.MainForm
 {
     [Serializable]
-    public class Model
+    public class MainFormModel
     {
-        public Model()
+        public MainFormModel()
         {
             Teams = new BindingList<Team>();
             FontSize = 10;

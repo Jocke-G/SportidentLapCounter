@@ -9,25 +9,28 @@ using SportidentLapCounter.DataTypes;
 using SPORTident;
 using SPORTident.Common;
 
-namespace SportidentLapCounter
+namespace SportidentLapCounter.Controls.MainForm
 {
-    public partial class MainForm : Form
+    public partial class MainFormView : Form
     {
+        private MainFormPresenter _presenter;
+
+        private MainFormPresenter Presenter => _presenter ?? (_presenter = new MainFormPresenter());
+
         private const string XmlPath = "database.xml";
 
         private Reader _reader;
-        private Model _model;
 
-        public MainForm()
+        public MainFormView()
         {
             InitializeComponent();
             InitializeSportidentReader();
 
             dataGridView.AutoGenerateColumns = false;
 
-            _model = LoadXmlFile();
-            dataGridView.DataSource = _model.Teams;
-            SetFontSize(_model.FontSize);
+            Presenter.Model = LoadXmlFile();
+            dataGridView.DataSource = Presenter.Model.Teams;
+            SetFontSize(Presenter.Model.FontSize);
         }
 
         private void InitializeSportidentReader()
@@ -43,20 +46,20 @@ namespace SportidentLapCounter
             GetSiDevices();
         }
 
-        private Model LoadXmlFile()
+        private MainFormModel LoadXmlFile()
         {
             if (!File.Exists(XmlPath))
-                return new Model();
+                return new MainFormModel();
 
             try
             {
                 using (var file = new StreamReader(XmlPath))
                 {
-                    var serializer = new XmlSerializer(typeof(Model));
+                    var serializer = new XmlSerializer(typeof(MainFormModel));
                     var obj = serializer.Deserialize(file);
-                    var model = obj as Model;
+                    var model = obj as MainFormModel;
                     if (model == null)
-                        return new Model();
+                        return new MainFormModel();
 
                     file.Close();
                     return model;
@@ -65,7 +68,7 @@ namespace SportidentLapCounter
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
-                return new Model();
+                return new MainFormModel();
             }
         }
 
@@ -93,21 +96,21 @@ namespace SportidentLapCounter
             {
                 var punchData = e.PunchData.First();
                 var sportidentCardnumber = punchData.Siid;
-                if (!_model.Teams.Where(x => x.SportidentCardNumber == sportidentCardnumber).ToList().Any())
+                if (!Presenter.Model.Teams.Where(x => x.SportidentCardNumber == sportidentCardnumber).ToList().Any())
                 {
-                    _model.Teams.Add(new Team { SportidentCardNumber = sportidentCardnumber });
+                    Presenter.Model.Teams.Add(new Team { SportidentCardNumber = sportidentCardnumber });
                 }
 
-                foreach (var x in _model.Teams.Where(x => x.SportidentCardNumber == sportidentCardnumber).ToList())
+                foreach (var x in Presenter.Model.Teams.Where(x => x.SportidentCardNumber == sportidentCardnumber).ToList())
                 {
                     x.Laps += 1;
                     x.LatestPunchTime = punchData.PunchDateTime;
                 }
 
-                _model.Teams = new BindingList<Team>(_model.Teams.OrderByDescending(x => x.Laps).ThenBy(x => x.LatestPunchTime).ToList());
+                Presenter.Model.Teams = new BindingList<Team>(Presenter.Model.Teams.OrderByDescending(x => x.Laps).ThenBy(x => x.LatestPunchTime).ToList());
 
                 dataGridView.DataSource = null;
-                dataGridView.DataSource = _model.Teams;
+                dataGridView.DataSource = Presenter.Model.Teams;
                 dataGridView.ClearSelection();
 
                 SaveFile();
@@ -151,15 +154,15 @@ namespace SportidentLapCounter
         {
             using (var streamWriter = new StreamWriter(XmlPath))
             {
-                var xmlSerializer = new XmlSerializer(typeof(Model));
-                xmlSerializer.Serialize(streamWriter, _model);
+                var xmlSerializer = new XmlSerializer(typeof(MainFormModel));
+                xmlSerializer.Serialize(streamWriter, Presenter.Model);
                 streamWriter.Close();
             }
         }
 
         private void SaveFile(object sender, DataGridViewCellEventArgs e)
         {
-            if (_model == null)
+            if (Presenter.Model == null)
                 return;
 
             SaveFile();
@@ -199,7 +202,7 @@ namespace SportidentLapCounter
             var font = new Font(dataGridView.DefaultCellStyle.Font.FontFamily, fontSize);
             dataGridView.DefaultCellStyle.Font = font;
             dataGridView.ColumnHeadersDefaultCellStyle.Font = font;
-            _model.FontSize = fontSize;
+            Presenter.Model.FontSize = fontSize;
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
