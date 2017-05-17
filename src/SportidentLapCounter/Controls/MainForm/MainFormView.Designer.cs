@@ -28,20 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.comboBox_sportidentDevices = new System.Windows.Forms.ComboBox();
             this.button_sportidentConnect = new System.Windows.Forms.Button();
             this.button_sportidentDisconnect = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.columnNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnSportidentCardNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnLaps = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnLatestPunchTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buttonBigger = new System.Windows.Forms.Button();
             this.buttonSmaller = new System.Windows.Forms.Button();
             this.buttonFullscreen = new System.Windows.Forms.Button();
             this.panelSettings = new System.Windows.Forms.Panel();
+            this.columnNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnSportidentCardNumber1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnSportidentCardNumber2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnLaps = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnLatestPunchTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.panelSettings.SuspendLayout();
             this.SuspendLayout();
@@ -88,7 +89,8 @@
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnNumber,
             this.columnName,
-            this.columnSportidentCardNumber,
+            this.columnSportidentCardNumber1,
+            this.columnSportidentCardNumber2,
             this.columnLaps,
             this.columnLatestPunchTime});
             this.dataGridView.Location = new System.Drawing.Point(12, 86);
@@ -98,39 +100,6 @@
             this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellValueChanged);
             this.dataGridView.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.RowAddedOrDeleted);
             this.dataGridView.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.RowAddedOrDeleted);
-            // 
-            // columnNumber
-            // 
-            this.columnNumber.DataPropertyName = "Number";
-            this.columnNumber.HeaderText = "Nr";
-            this.columnNumber.Name = "columnNumber";
-            // 
-            // columnName
-            // 
-            this.columnName.DataPropertyName = "Name";
-            this.columnName.HeaderText = "Lagnamn";
-            this.columnName.Name = "columnName";
-            // 
-            // columnSportidentCardNumber
-            // 
-            this.columnSportidentCardNumber.DataPropertyName = "SportidentCardNumber";
-            this.columnSportidentCardNumber.HeaderText = "Sportident";
-            this.columnSportidentCardNumber.Name = "columnSportidentCardNumber";
-            // 
-            // columnLaps
-            // 
-            this.columnLaps.DataPropertyName = "Laps";
-            this.columnLaps.HeaderText = "Varv";
-            this.columnLaps.Name = "columnLaps";
-            // 
-            // columnLatestPunchTime
-            // 
-            this.columnLatestPunchTime.DataPropertyName = "LatestPunchTime";
-            dataGridViewCellStyle6.Format = "T";
-            dataGridViewCellStyle6.NullValue = null;
-            this.columnLatestPunchTime.DefaultCellStyle = dataGridViewCellStyle6;
-            this.columnLatestPunchTime.HeaderText = "Senaste tid";
-            this.columnLatestPunchTime.Name = "columnLatestPunchTime";
             // 
             // buttonBigger
             // 
@@ -177,6 +146,45 @@
             this.panelSettings.Size = new System.Drawing.Size(934, 68);
             this.panelSettings.TabIndex = 13;
             // 
+            // columnNumber
+            // 
+            this.columnNumber.DataPropertyName = "Number";
+            this.columnNumber.HeaderText = "Nr";
+            this.columnNumber.Name = "columnNumber";
+            // 
+            // columnName
+            // 
+            this.columnName.DataPropertyName = "Name";
+            this.columnName.HeaderText = "Lagnamn";
+            this.columnName.Name = "columnName";
+            // 
+            // columnSportidentCardNumber1
+            // 
+            this.columnSportidentCardNumber1.DataPropertyName = "SportidentCardNumber1";
+            this.columnSportidentCardNumber1.HeaderText = "Sportident 1";
+            this.columnSportidentCardNumber1.Name = "columnSportidentCardNumber1";
+            // 
+            // columnSportidentCardNumber2
+            // 
+            this.columnSportidentCardNumber2.DataPropertyName = "SportidentCardNumber2";
+            this.columnSportidentCardNumber2.HeaderText = "Sportident 2";
+            this.columnSportidentCardNumber2.Name = "columnSportidentCardNumber2";
+            // 
+            // columnLaps
+            // 
+            this.columnLaps.DataPropertyName = "Laps";
+            this.columnLaps.HeaderText = "Varv";
+            this.columnLaps.Name = "columnLaps";
+            // 
+            // columnLatestPunchTime
+            // 
+            this.columnLatestPunchTime.DataPropertyName = "LatestPunchTime";
+            dataGridViewCellStyle1.Format = "T";
+            dataGridViewCellStyle1.NullValue = null;
+            this.columnLatestPunchTime.DefaultCellStyle = dataGridViewCellStyle1;
+            this.columnLatestPunchTime.HeaderText = "Senaste tid";
+            this.columnLatestPunchTime.Name = "columnLatestPunchTime";
+            // 
             // MainFormView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,7 +193,7 @@
             this.Controls.Add(this.panelSettings);
             this.Controls.Add(this.dataGridView);
             this.KeyPreview = true;
-            this.Name = "MainForm";
+            this.Name = "MainFormView";
             this.Text = "Sportident Lap Counter";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.panelSettings.ResumeLayout(false);
@@ -199,15 +207,16 @@
         private System.Windows.Forms.Button button_sportidentConnect;
         private System.Windows.Forms.Button button_sportidentDisconnect;
         private System.Windows.Forms.DataGridView dataGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnNumber;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnSportidentCardNumber;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnLaps;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnLatestPunchTime;
         private System.Windows.Forms.Button buttonBigger;
         private System.Windows.Forms.Button buttonSmaller;
         private System.Windows.Forms.Button buttonFullscreen;
         private System.Windows.Forms.Panel panelSettings;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnNumber;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnSportidentCardNumber1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnSportidentCardNumber2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnLaps;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnLatestPunchTime;
     }
 }
 

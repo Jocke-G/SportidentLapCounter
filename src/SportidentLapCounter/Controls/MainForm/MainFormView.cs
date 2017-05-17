@@ -67,12 +67,12 @@ namespace SportidentLapCounter.Controls.MainForm
             {
                 var punchData = e.PunchData.First();
                 var sportidentCardnumber = punchData.Siid;
-                if (!Presenter.Model.Teams.Where(x => x.SportidentCardNumber == sportidentCardnumber).ToList().Any())
+                if (!Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList().Any())
                 {
-                    Presenter.Model.Teams.Add(new Team { SportidentCardNumber = sportidentCardnumber });
+                    Presenter.Model.Teams.Add(new Team { SportidentCardNumber1 = sportidentCardnumber });
                 }
 
-                foreach (var x in Presenter.Model.Teams.Where(x => x.SportidentCardNumber == sportidentCardnumber).ToList())
+                foreach (var x in Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList())
                 {
                     x.Laps += 1;
                     x.LatestPunchTime = punchData.PunchDateTime;
@@ -204,7 +204,8 @@ namespace SportidentLapCounter.Controls.MainForm
         {
             if (FormBorderStyle == FormBorderStyle.None)
             {
-                columnSportidentCardNumber.Visible = true;
+                columnSportidentCardNumber1.Visible = true;
+                columnSportidentCardNumber2.Visible = true;
                 columnLatestPunchTime.Visible = true;
                 dataGridView.AllowUserToAddRows = true;
                 dataGridView.RowHeadersVisible = true;
@@ -220,7 +221,8 @@ namespace SportidentLapCounter.Controls.MainForm
                     if (result == DialogResult.No)
                         return;
                 }
-                columnSportidentCardNumber.Visible = false;
+                columnSportidentCardNumber1.Visible = false;
+                columnSportidentCardNumber2.Visible = false;
                 columnLatestPunchTime.Visible = false;
                 dataGridView.AllowUserToAddRows = false;
                 dataGridView.RowHeadersVisible = false;
