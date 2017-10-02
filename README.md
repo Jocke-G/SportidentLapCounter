@@ -1,3 +1,5 @@
+[![BCH compliance](https://bettercodehub.com/edge/badge/Jocke-G/SportidentLapCounter?branch=master)](https://bettercodehub.com/)
+
 # Sportident Lap Counter
 
 Counts each punch from a directly connected SportIdent base station.
