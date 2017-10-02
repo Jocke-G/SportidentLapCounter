@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Nancy;
+using Nancy.Hosting.Self;
 using SportidentLapCounter.DataTypes;
+using SportidentLapCounter.Helpers;
 using SPORTident;
 using SPORTident.Common;
+using System.Net.Sockets;
+using SportidentLapCounter.Controls.CardInjectorForm;
 
 namespace SportidentLapCounter.Controls.MainForm
 {
@@ -16,11 +22,13 @@ namespace SportidentLapCounter.Controls.MainForm
         private MainFormPresenter Presenter => _presenter ?? (_presenter = new MainFormPresenter());
 
 
+        private NancyHost _host;
         private Reader _reader;
 
         public MainFormView()
         {
             InitializeComponent();
+
             InitializeSportidentReader();
 
             dataGridView.AutoGenerateColumns = false;
@@ -66,25 +74,33 @@ namespace SportidentLapCounter.Controls.MainForm
             this.InvokeIfRequired(() =>
             {
                 var punchData = e.PunchData.First();
-                var sportidentCardnumber = punchData.Siid;
-                if (!Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList().Any())
-                {
-                    Presenter.Model.Teams.Add(new Team { SportidentCardNumber1 = sportidentCardnumber });
-                }
-
-                foreach (var x in Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList())
-                {
-                    x.Laps += 1;
-                    x.LatestPunchTime = punchData.PunchDateTime;
-                }
-
-                Presenter.SortTeams();
-
-                UpdateFromModel();
-                dataGridView.ClearSelection();
-
-                Presenter.PersistModel();
+                SavePunchData(punchData);
             });
+        }
+
+        private void SavePunchData(CardPunchData punchData) {
+
+            var sportidentCardnumber = punchData.Siid;
+            if (!Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList().Any())
+            {
+                Presenter.Model.Teams.Add(new Team { SportidentCardNumber1 = sportidentCardnumber });
+            }
+
+            foreach (var x in Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList())
+            {
+                x.Laps += 1;
+                x.LatestPunchTime = punchData.PunchDateTime;
+            }
+
+            SortUpdatePersist();
+        }
+
+        private void SortUpdatePersist()
+        {
+            Presenter.SortTeams();
+            UpdateFromModel();
+            dataGridView.ClearSelection();
+            Presenter.PersistModel();
         }
 
         private void UpdateFromModel()
@@ -211,7 +227,8 @@ namespace SportidentLapCounter.Controls.MainForm
                 dataGridView.RowHeadersVisible = true;
                 FormBorderStyle = FormBorderStyle.Sizable;
                 panelSettings.Visible = true;
-                dataGridView.Location = new Point(12, 86);
+                dataGridView.Top += panelSettings.Height;
+                dataGridView.Height -= panelSettings.Height;
             }
             else
             {
@@ -230,9 +247,88 @@ namespace SportidentLapCounter.Controls.MainForm
                 FormBorderStyle = FormBorderStyle.None;
                 panelSettings.Visible = false;
                 WindowState = FormWindowState.Maximized;
-                dataGridView.Location = new Point(12, 12);
+                dataGridView.Top -= panelSettings.Height;
+                dataGridView.Height += panelSettings.Height;
                 dataGridView.ClearSelection();
             }
+        }
+
+        private void PasteExcellData()
+        {
+            var rowsInClipboard = PasteHelper.SplitClipboardToRows();
+            if (rowsInClipboard == null || rowsInClipboard.Length == 0)
+                return;
+
+            new List<Team>();
+            foreach (var row in rowsInClipboard)
+            {
+                var valuesInRow = PasteHelper.SplitExcellRowToArray(row, 5);
+                if (valuesInRow == null || valuesInRow.Length < 2)
+                    continue;
+
+                int number;
+                if (!int.TryParse(valuesInRow[0], out number))
+                    continue;
+
+                var team = new Team
+                {
+                    Number = number,
+                    Name = valuesInRow[1],
+                };
+
+                if (valuesInRow.Length >= 3)
+                {
+                    team.SportidentCardNumber1 = valuesInRow[2];
+                }
+                if (valuesInRow.Length >= 4)
+                {
+                    team.SportidentCardNumber1 = valuesInRow[3];
+                }
+
+                Presenter.Model.Teams.Add(team);
+                SortUpdatePersist();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            PasteExcellData();
+        }
+
+        private void buttonWebserverStart_Click(object sender, EventArgs e)
+        {
+            var port = textBoxPort.Text;
+            int portInt;
+            if (!int.TryParse(port, out portInt))
+            {
+                MessageBox.Show("Port måste vara numerisk!");
+                return;
+            }
+            var url = $"http://localhost:{port}";
+            _host = new NancyHost(new Uri(url));
+            _host.Start();
+
+            buttonWebserverStop.Enabled = true;
+            buttonWebserverStart.Enabled = false;
+        }
+
+        private void buttonWebserverStop_Click(object sender, EventArgs e)
+        {
+            _host.Stop();
+            buttonWebserverStop.Enabled = false;
+            buttonWebserverStart.Enabled = true;
+        }
+
+        private void button_Fake_Click(object sender, EventArgs e)
+        {
+            var cardInjectForm = new CardInjectFormView();
+            cardInjectForm.Show();
+            cardInjectForm.CallbackMethod += Callback;
+        }
+
+        public void Callback(CardPunchData card)
+        {
+            SavePunchData(card);
         }
     }
 }
