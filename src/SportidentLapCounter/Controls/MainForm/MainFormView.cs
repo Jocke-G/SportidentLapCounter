@@ -4,14 +4,13 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Nancy;
 using Nancy.Hosting.Self;
 using SportidentLapCounter.DataTypes;
 using SportidentLapCounter.Helpers;
 using SPORTident;
 using SPORTident.Common;
-using System.Net.Sockets;
 using SportidentLapCounter.Controls.CardInjectorForm;
+using SportidentLapCounter.Controls.VerificationForm;
 
 namespace SportidentLapCounter.Controls.MainForm
 {
@@ -20,10 +19,9 @@ namespace SportidentLapCounter.Controls.MainForm
         private MainFormPresenter _presenter;
 
         private MainFormPresenter Presenter => _presenter ?? (_presenter = new MainFormPresenter());
-
-
         private NancyHost _host;
         private Reader _reader;
+        private VerificationFormView _verificationForm;
 
         public MainFormView()
         {
@@ -49,7 +47,6 @@ namespace SportidentLapCounter.Controls.MainForm
             _reader.ErrorOccured += Reader_ErrorOccured;
             GetSiDevices();
         }
-
 
         private void GetSiDevices()
         {
@@ -86,10 +83,12 @@ namespace SportidentLapCounter.Controls.MainForm
                 Presenter.Model.Teams.Add(new Team { SportidentCardNumber1 = sportidentCardnumber });
             }
 
-            foreach (var x in Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList())
+            foreach (var team in Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList())
             {
-                x.Laps += 1;
-                x.LatestPunchTime = punchData.PunchDateTime;
+                team.Laps += 1;
+                team.LatestPunchTime = punchData.PunchDateTime;
+
+                _verificationForm?.ShowPunch(team);
             }
 
             SortUpdatePersist();
@@ -324,6 +323,16 @@ namespace SportidentLapCounter.Controls.MainForm
             var cardInjectForm = new CardInjectFormView();
             cardInjectForm.Show();
             cardInjectForm.CallbackMethod += Callback;
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (_verificationForm == null)
+            {
+                _verificationForm = new VerificationFormView();
+                _verificationForm.Closed += (o, args) => _verificationForm = null;
+                _verificationForm.Show(this);
+            }
         }
 
         public void Callback(CardPunchData card)

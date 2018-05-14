@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.comboBox_sportidentDevices = new System.Windows.Forms.ComboBox();
             this.button_sportidentConnect = new System.Windows.Forms.Button();
             this.button_sportidentDisconnect = new System.Windows.Forms.Button();
@@ -43,6 +43,7 @@
             this.buttonSmaller = new System.Windows.Forms.Button();
             this.buttonFullscreen = new System.Windows.Forms.Button();
             this.groupBoxView = new System.Windows.Forms.GroupBox();
+            this.buttonVerificationWindow = new System.Windows.Forms.Button();
             this.buttonPaste = new System.Windows.Forms.Button();
             this.groupBoxWebServer = new System.Windows.Forms.GroupBox();
             this.buttonWebserverStop = new System.Windows.Forms.Button();
@@ -148,9 +149,9 @@
             // columnLatestPunchTime
             // 
             this.columnLatestPunchTime.DataPropertyName = "LatestPunchTime";
-            dataGridViewCellStyle2.Format = "T";
-            dataGridViewCellStyle2.NullValue = null;
-            this.columnLatestPunchTime.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Format = "T";
+            dataGridViewCellStyle1.NullValue = null;
+            this.columnLatestPunchTime.DefaultCellStyle = dataGridViewCellStyle1;
             this.columnLatestPunchTime.HeaderText = "Senaste tid";
             this.columnLatestPunchTime.Name = "columnLatestPunchTime";
             // 
@@ -186,16 +187,27 @@
             // 
             // groupBoxView
             // 
+            this.groupBoxView.Controls.Add(this.buttonVerificationWindow);
             this.groupBoxView.Controls.Add(this.buttonBigger);
             this.groupBoxView.Controls.Add(this.buttonSmaller);
             this.groupBoxView.Controls.Add(this.buttonFullscreen);
             this.groupBoxView.Controls.Add(this.buttonPaste);
             this.groupBoxView.Location = new System.Drawing.Point(272, 3);
             this.groupBoxView.Name = "groupBoxView";
-            this.groupBoxView.Size = new System.Drawing.Size(274, 75);
+            this.groupBoxView.Size = new System.Drawing.Size(422, 75);
             this.groupBoxView.TabIndex = 16;
             this.groupBoxView.TabStop = false;
             this.groupBoxView.Text = "Visning";
+            // 
+            // buttonVerificationWindow
+            // 
+            this.buttonVerificationWindow.Location = new System.Drawing.Point(274, 19);
+            this.buttonVerificationWindow.Name = "buttonVerificationWindow";
+            this.buttonVerificationWindow.Size = new System.Drawing.Size(128, 23);
+            this.buttonVerificationWindow.TabIndex = 14;
+            this.buttonVerificationWindow.Text = "Löparfönster";
+            this.buttonVerificationWindow.UseVisualStyleBackColor = true;
+            this.buttonVerificationWindow.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // buttonPaste
             // 
@@ -213,7 +225,7 @@
             this.groupBoxWebServer.Controls.Add(this.buttonWebserverStart);
             this.groupBoxWebServer.Controls.Add(this.textBoxPort);
             this.groupBoxWebServer.Controls.Add(this.label1);
-            this.groupBoxWebServer.Location = new System.Drawing.Point(552, 3);
+            this.groupBoxWebServer.Location = new System.Drawing.Point(700, 3);
             this.groupBoxWebServer.Name = "groupBoxWebServer";
             this.groupBoxWebServer.Size = new System.Drawing.Size(168, 75);
             this.groupBoxWebServer.TabIndex = 15;
@@ -352,6 +364,7 @@
         private System.Windows.Forms.FlowLayoutPanel panelSettings;
         private System.Windows.Forms.GroupBox groupBoxFake;
         private System.Windows.Forms.Button button_Fake;
+        private System.Windows.Forms.Button buttonVerificationWindow;
     }
 }
 

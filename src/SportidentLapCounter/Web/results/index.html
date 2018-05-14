@@ -4,52 +4,46 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Sportident Lap Counter</title>
 
     <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../bootstrap/css/bootstrap-table.min.css" rel="stylesheet">
 
-    <script src="../jquery/jquery-3.2.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="../jquery/jquery-3.3.1.min.js"></script>
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script src="../bootstrap/js/bootstrap-table.min.js"></script>
-    
-    <script>
-    $(document).ready(function(){
 
-  $.ajax({
-       url: '/json/results.json',
-       dataType: 'json',
-       success: function(data) {
-           $('#resultTable').bootstrapTable({
-              data: data
-           });
-       },
-       error: function(e) {
-           console.log(e.responseText);
-       }
-    });
- });
-
-    //window.setInterval(function () {
-    //    /// call your function here
-    //}, 5000);
-    </script>
   </head>
   <body>
-    <h1>Hello, world!</h1>
 
-    <table class="display table table-bordered" data-url="/json/results.json" id="resultTable">
+  <table class="display table table-bordered" id="resultTable">
     <thead>
-        <tr>
-            <th data-field="Number">Nr</th>
-            <th data-field="Name">Lagnamn</th>
-            <th data-field="Laps">Varv</th>
-        </tr>
+      <tr>
+        <th data-field="Number">Nr</th>
+        <th data-field="Name">Lagnamn</th>
+        <th data-field="Laps">Varv</th>
+      </tr>
     </thead>
-</table>
+  </table>
 
+  <script>
+      var $table = $('#resultTable');
+      $(document).ready(initTable());
 
-  </body>
+      function initTable() {
+          $('#resultTable').bootstrapTable({
+              url: "/json/results.json"
+          });
+      }
+
+      function reloadTable() {
+          $table.bootstrapTable('refresh');
+      }
+
+      window.setInterval(function() {
+              reloadTable();
+          },
+          5000);
+  </script>
+ </body>
 </html>
