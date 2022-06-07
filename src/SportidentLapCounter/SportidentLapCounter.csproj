@@ -71,14 +71,8 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SPORTident.Common">
-      <HintPath>..\Lib\Sportident\SPORTident.Common.dll</HintPath>
-    </Reference>
     <Reference Include="SPORTident.Communication">
       <HintPath>..\Lib\Sportident\SPORTident.Communication.dll</HintPath>
-    </Reference>
-    <Reference Include="SPORTident.Reader">
-      <HintPath>..\Lib\Sportident\SPORTident.Reader.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -118,7 +112,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataTypes\Team.cs" />
+    <Compile Include="Services\ISportIdentService.cs" />
     <Compile Include="Services\PersistenceService.cs" />
+    <Compile Include="Services\SportIdentService.cs" />
     <Compile Include="WebServer\Bootstrapper.cs" />
     <Compile Include="WebServer\WebPages.cs" />
     <EmbeddedResource Include="Controls\CardInjectorForm\CardInjectFormView.resx">

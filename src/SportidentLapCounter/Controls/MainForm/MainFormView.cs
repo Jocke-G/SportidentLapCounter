@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Nancy.Hosting.Self;
+using SPORTident;
 using SportidentLapCounter.DataTypes;
 using SportidentLapCounter.Helpers;
-using SPORTident;
-using SPORTident.Common;
 using SportidentLapCounter.Controls.CardInjectorForm;
 using SportidentLapCounter.Controls.VerificationForm;
+using SportidentLapCounter.Services;
+using SPORTident.Communication.UsbDevice;
 
 namespace SportidentLapCounter.Controls.MainForm
 {
@@ -20,7 +20,7 @@ namespace SportidentLapCounter.Controls.MainForm
 
         private MainFormPresenter Presenter => _presenter ?? (_presenter = new MainFormPresenter());
         private NancyHost _host;
-        private Reader _reader;
+        private readonly ISportIdentService _deviceService = new SportIdentService();
         private VerificationFormView _verificationForm;
 
         public MainFormView()
@@ -37,21 +37,16 @@ namespace SportidentLapCounter.Controls.MainForm
 
         private void InitializeSportidentReader()
         {
-            _reader = new Reader
-            {
-                WriteBackupFile = true,
-                BackupFileName = Path.Combine(Environment.CurrentDirectory, $@"backup\{DateTime.Now:yyyy-MM-dd}_stamps.bak")
-            };
-
-            _reader.OnlineStampRead += ReaderOnOnlineStampRead;
-            _reader.ErrorOccured += Reader_ErrorOccured;
             GetSiDevices();
+            _deviceService.RadioPunch += OnRadioPunch;
+            _deviceService.CardReadout += OnCardReadout;
         }
 
         private void GetSiDevices()
         {
-            ReaderDeviceInfo.GetAvailableDeviceList();
-            foreach (var device in ReaderDeviceInfo.AvailableDevices)
+            comboBox_sportidentDevices.Items.Clear();
+            var devices = _deviceService.GetAllDevices();
+            foreach (var device in devices)
             {
                 comboBox_sportidentDevices.Items.Add(device);
             }
@@ -61,18 +56,40 @@ namespace SportidentLapCounter.Controls.MainForm
             }
         }
 
-        private void Reader_ErrorOccured(object sender, FileLoggerEventArgs e)
-        {
-            MessageBox.Show(e.Message);
-        }
-
-        private void ReaderOnOnlineStampRead(object sender, SportidentDataEventArgs e)
+        private void OnRadioPunch(object sender, CardPunchData e)
         {
             this.InvokeIfRequired(() =>
             {
-                var punchData = e.PunchData.First();
-                SavePunchData(punchData);
+                SavePunchData(e);
             });
+        }
+
+        private void OnCardReadout(object sender, SportidentCard e)
+        {
+            this.InvokeIfRequired(() =>
+            {
+                SaveReadout(e);
+            });
+        }
+
+        private void SaveReadout(SportidentCard card)
+        {
+
+            var sportidentCardnumber = card.Siid;
+            if (!Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList().Any())
+            {
+                Presenter.Model.Teams.Add(new Team { SportidentCardNumber1 = sportidentCardnumber });
+            }
+
+            foreach (var team in Presenter.Model.Teams.Where(x => x.SportidentCardNumber1 == sportidentCardnumber || x.SportidentCardNumber2 == sportidentCardnumber).ToList())
+            {
+                team.Laps = card.ControlPunchList.Count;
+                team.LatestPunchTime = card.ControlPunchList.Last().PunchDateTime;
+
+                _verificationForm?.ShowPunch(team);
+            }
+
+            SortUpdatePersist();
         }
 
         private void SavePunchData(CardPunchData punchData) {
@@ -110,11 +127,8 @@ namespace SportidentLapCounter.Controls.MainForm
 
         private void Connect()
         {
-            var readerDeviceInfo = (ReaderDeviceInfo)(comboBox_sportidentDevices.SelectedItem);
-            _reader.InputDevice = readerDeviceInfo;
-            _reader.OutputDevice = new ReaderDeviceInfo(ReaderDeviceType.None);
-            _reader.OpenInputDevice();
-            _reader.OpenOutputDevice();
+            var readerDeviceInfo = (DeviceInfo)(comboBox_sportidentDevices.SelectedItem);
+            _deviceService.Connect(readerDeviceInfo);
 
             comboBox_sportidentDevices.Enabled = false;
             button_sportidentConnect.Enabled = false;
@@ -135,12 +149,12 @@ namespace SportidentLapCounter.Controls.MainForm
 
         private void button_sportidentDisconnect_Click(object sender, EventArgs e)
         {
-            _reader.CloseDevices();
+            var readerDeviceInfo = (DeviceInfo)comboBox_sportidentDevices.SelectedItem;
+            _deviceService.Disconnect(readerDeviceInfo);
             comboBox_sportidentDevices.Enabled = true;
             button_sportidentConnect.Enabled = true;
             button_sportidentDisconnect.Enabled = false;
         }
-
 
         private void CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
@@ -333,6 +347,11 @@ namespace SportidentLapCounter.Controls.MainForm
                 _verificationForm.Closed += (o, args) => _verificationForm = null;
                 _verificationForm.Show(this);
             }
+        }
+
+        private void button_sportidentRefresh_Click(object sender, EventArgs e)
+        {
+            GetSiDevices();
         }
 
         public void Callback(CardPunchData card)
